@@ -4,6 +4,7 @@ import urllib.request
 import urllib.parse
 import http.cookiejar
 import pandas as pd
+import datetime
 
 
 def gen_function_xml(areaIds, serviceIds, woStates, omStates, startDate, endDate, DateType,
@@ -67,7 +68,7 @@ def login():
         print(e.reason)
 
 
-def search_download(areaIds, serviceIds, omStates, startDate, endDate, DateType, fileName, woStates = None):
+def search_download(areaIds, serviceIds, omStates, startDate, endDate, DateType, fileName, woStates=None):
     url = 'http://10.53.160.88:9001/IOMPROJ/FaultExportForwardServlet'
     headers = {
         'Accept': 'image/gif, image/jpeg, image/pjpeg, application/x-ms-application, application/xaml+xml, '
@@ -101,22 +102,29 @@ def search_download(areaIds, serviceIds, omStates, startDate, endDate, DateType,
 
 
 if __name__ == '__main__':
-
     # 模拟登录
     login()
 
-    fileName = '20200303-finish.xlsx'
+    current = datetime.datetime.now()
+    endDate = current.strftime('%Y-%m-%d %H:%M:%S')
+
+    current_day = datetime.datetime(current.year, current.month, current.day)
+    startDate = current_day.strftime('%Y-%m-%d %H:%M:%S')
+
+    fileName = '%s-finish.xlsx' % (current.strftime('%Y%m%d%H%M%S'))
 
     # <parameter name="areaIds">4,102,41,42,43,44,45</parameter>
     search_download(areaIds='43', serviceIds='220323', omStates='10F',
-                    startDate='2020-03-03 00:00:00', endDate='2020-03-04 00:00:00', DateType=2, fileName=fileName)
+                    startDate=startDate, endDate=endDate, DateType=2, fileName=fileName)
     df = pd.read_excel(fileName, sheet_name='全量工单信息')
     print(df['工单状态'].groupby(df['区县']).count())
     print(df[['区县', '所属网格', '工单状态']].groupby(['区县', '所属网格']).count().reset_index())
 
-    fileName = '20200303-todo.xlsx'
+    startDate = (current_day - datetime.timedelta(days=60)).strftime('%Y-%m-%d %H:%M:%S')
+
+    fileName = '%s-todo.xlsx' % (current.strftime('%Y%m%d%H%M%S'))
     search_download(areaIds='43', serviceIds='220323', woStates='101,102,103,104,301,303', omStates='10H',
-                    startDate='2020-01-01 00:00:00', endDate='2020-03-04 00:00:00', DateType=1, fileName=fileName)
+                    startDate=startDate, endDate=endDate, DateType=1, fileName=fileName)
     df = pd.read_excel(fileName, sheet_name='全量工单信息')
     print(df['工单状态'].groupby(df['区县']).count())
     print(df[['区县', '所属网格', '工单状态']].groupby(['区县', '所属网格']).count().reset_index())
