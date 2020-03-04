@@ -1,4 +1,4 @@
-﻿/*
+/*
  * RSA, a suite of routines for performing RSA public-key computations in JavaScript.
  * Copyright 1998-2005 David Shapiro.
  * Dave Shapiro
@@ -697,7 +697,8 @@ RSAUtils.setMaxDigits(130);
 })(window);
 
 
-function cmdEncrypt(text) {
+function cmdEncrypt(text)
+{
 	RSAUtils.setMaxDigits(200);
 	var key = RSAUtils.getKeyPair("10001", '', "c1ac2fa47872bdadfb57d998950b460216c128b5e3538fc86a19376f8706db06b01242a479dce84f505be8774e9ca7edcbbeef160ec04db8b6541fee042845db1a46c2037f3988fdd9889373ff8d8e0a9d4f7446963f1ce93e79d5d7ef5ecb5802e0e65f5e47dc50e1c1de98b56134ecac56010939e291f6b55f2b3a9eff8a97");
 	return RSAUtils.encryptedString(key, text);

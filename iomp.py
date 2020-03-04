@@ -5,7 +5,17 @@ import urllib.parse
 import http.cookiejar
 import pandas as pd
 import datetime
+import execjs
+import os
 
+
+def encrypt(text):
+    os.environ["EXECJS_RUNTIME"] = "PhantomJS"
+    node = execjs.get()
+    # return execjs.compile(open(r"security.js", encoding='utf-8').read()).call('cmdEncrypt', text)
+    ctx = node.compile(open("security.js", encoding='utf-8').read())
+    js = 'cmdEncrypt("{0}")'.format(text)
+    return ctx.eval(js)
 
 def gen_function_xml(areaIds, serviceIds, woStates, omStates, startDate, endDate, DateType,
                      reportCode='orderNotRealTime', ttOrgId='10008663', staffId=223214, priv='infoHide',
@@ -31,7 +41,7 @@ def gen_function_xml(areaIds, serviceIds, woStates, omStates, startDate, endDate
     return xml
 
 
-def login():
+def login(user_name, password):
     headers = {
         'Accept': '*/*',
         'Accept-Language': 'zh-CN',
@@ -47,9 +57,9 @@ def login():
     url = 'http://10.53.160.88:9001/IOMPROJ/logonin'
     login_data = '''<?xml version="1.0"?>
         <Function name="login" serviceName="com.zterc.web.WebLoginManager" userTransaction="true">
-        <Param type="s">{R}158a10da9f94b367ceb870b92ce6e69a58918e69dde9c17cc861d6970ee245034b62d2e16cc347fea184b33af36e06fdc7b63f8c9317f5d1d420892e4918f3ad2bb0ff57fb7d9ed7b51078c76c708f6b6baf5e165e5812d7181c553984ef44bbf1a117567b74a610a5071dbb68b7143b73552f145627ef55ee37b25a70ac0542</Param>
-        <Param type="s">{R}1983d032f55a206359067368a0fd8507ceaf0b00a7233b04cd6916e8bd9a09377c2cbce5ed78a182bc9c4851fafb8581d20da80d84622e516b345201124a6229e3b3b98ba16fd5ee554b7327adb7ed0d6c2d282978d31dafd76fa3310123f144ca8d2fb3037aa930f06b0caa8c0242724287acd0c7eedfaeb57cb3f6d6bfc401</Param>
-        <Param type="s">zh_cn</Param></Function>'''
+        <Param type="s">{R}%s</Param>
+        <Param type="s">{R}%s</Param>
+        <Param type="s">zh_cn</Param></Function>''' % (encrypt(user_name), encrypt(password))
 
     request = urllib.request.Request(url, data=login_data.encode('utf8'), headers=headers)
     filename = 'cookie.txt'
@@ -103,7 +113,7 @@ def search_download(areaIds, serviceIds, omStates, startDate, endDate, DateType,
 
 if __name__ == '__main__':
     # 模拟登录
-    login()
+    login('chenman', 'z!!29dMR')
 
     current = datetime.datetime.now()
     endDate = current.strftime('%Y-%m-%d %H:%M:%S')

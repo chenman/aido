@@ -2,10 +2,17 @@
 
 import datetime
 import execjs
+import os
 
 
 def encrypt(text):
-    return execjs.compile(open(r"security.js", encoding='utf-8').read()).call('cmdEncrypt', text)
+    os.environ["EXECJS_RUNTIME"] = "PhantomJS"
+    node = execjs.get()
+    # return execjs.compile(open(r"security.js", encoding='utf-8').read()).call('cmdEncrypt', text)
+    ctx = node.compile(open("security.js", encoding='utf-8').read())
+    js = 'cmdEncrypt("{0}")'.format(text)
+    return ctx.eval(js)
+
 
 if __name__ == '__main__':
     print(encrypt('chenman'))
