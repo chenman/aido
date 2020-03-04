@@ -17,6 +17,7 @@ def encrypt(text):
     js = 'cmdEncrypt("{0}")'.format(text)
     return ctx.eval(js)
 
+
 def gen_function_xml(areaIds, serviceIds, woStates, omStates, startDate, endDate, DateType,
                      reportCode='orderNotRealTime', ttOrgId='10008663', staffId=223214, priv='infoHide',
                      searchType='OrdMoni', searchFlag='true', pageIndex=1, pageSize=10000):
