@@ -112,10 +112,11 @@ def search_download(areaIds, serviceIds, omStates, startDate, endDate, DateType,
         print(e.reason)
 
 
-if __name__ == '__main__':
-    # 模拟登录
-    login('chenman', 'z!!29dMR')
-
+def get_current_finish():
+    """
+    查询当前竣工量及待办量
+    :return:
+    """
     current = datetime.datetime.now()
     endDate = current.strftime('%Y-%m-%d %H:%M:%S')
 
@@ -128,8 +129,10 @@ if __name__ == '__main__':
     search_download(areaIds='43', serviceIds='220323', omStates='10F',
                     startDate=startDate, endDate=endDate, DateType=2, fileName=fileName)
     df = pd.read_excel(fileName, sheet_name='全量工单信息')
+    print('\n%s - %s 竣工量：' % (startDate, endDate))
     print(df['工单状态'].groupby(df['区县']).count())
-    print(df[['区县', '所属网格', '工单状态']].groupby(['区县', '所属网格']).count().reset_index())
+    print(df[['区县', '所属网格', '工单状态']].groupby(['区县', '所属网格']).count().sort_values(by=['区县', '所属网格'],
+                                                                                 ascending=False).reset_index())
 
     startDate = (current_day - datetime.timedelta(days=60)).strftime('%Y-%m-%d %H:%M:%S')
 
@@ -137,5 +140,36 @@ if __name__ == '__main__':
     search_download(areaIds='43', serviceIds='220323', woStates='101,102,103,104,301,303', omStates='10H',
                     startDate=startDate, endDate=endDate, DateType=1, fileName=fileName)
     df = pd.read_excel(fileName, sheet_name='全量工单信息')
+    print('\n%s - %s 待办量：' % (startDate, endDate))
     print(df['工单状态'].groupby(df['区县']).count())
-    print(df[['区县', '所属网格', '工单状态']].groupby(['区县', '所属网格']).count().reset_index())
+    print(df[['区县', '所属网格', '工单状态']].groupby(['区县', '所属网格']).count().sort_values(by=['区县', '所属网格'],
+                                                                                 ascending=False).reset_index())
+
+
+def get_yesterday_finish():
+    """
+    查询昨日竣工量
+    :return:
+    """
+    current = datetime.datetime.now()
+    current_day = datetime.datetime(current.year, current.month, current.day)
+    startDate = (current_day - datetime.timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')
+    endDate = (current_day - datetime.timedelta(seconds=1)).strftime('%Y-%m-%d %H:%M:%S')
+
+    fileName = '%s-finish.xlsx' % ((current_day - datetime.timedelta(seconds=1)).strftime('%Y%m%d%H%M%S'))
+
+    # <parameter name="areaIds">4,102,41,42,43,44,45</parameter>
+    search_download(areaIds='43', serviceIds='220323', omStates='10F',
+                    startDate=startDate, endDate=endDate, DateType=2, fileName=fileName)
+    df = pd.read_excel(fileName, sheet_name='全量工单信息')
+    print('\n%s - %s 竣工量：' % (startDate, endDate))
+    print(df['工单状态'].groupby(df['区县']).count())
+    print(df[['区县', '所属网格', '工单状态']].groupby(['区县', '所属网格']).count().sort_values(by=['区县', '所属网格'],
+                                                                                 ascending=False).reset_index())
+
+
+if __name__ == '__main__':
+    # 模拟登录
+    login('chenman', 'z!!29dMR')
+    get_current_finish()
+    get_yesterday_finish()
