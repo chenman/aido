@@ -10,6 +10,11 @@ import os
 
 
 def encrypt(text):
+    """
+    用户名、密码加密
+    :param text: 明文
+    :return: 经加密后的密文
+    """
     os.environ["EXECJS_RUNTIME"] = "PhantomJS"
     node = execjs.get()
     # return execjs.compile(open(r"security.js", encoding='utf-8').read()).call('cmdEncrypt', text)
