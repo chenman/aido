@@ -175,6 +175,6 @@ def get_yesterday_finish():
 
 if __name__ == '__main__':
     # 模拟登录
-    login('chenman', 'z!!29dMR')
-    get_current_finish()
+    login('chenman', 'HB6q$*2y')
+    # get_current_finish()
     get_yesterday_finish()
