@@ -11,7 +11,7 @@ import os
 
 def encrypt(text):
     """
-    用户名、密码加密
+    调用js加密模块，进行用户名、密码加密
     :param text: 明文
     :return: 经加密后的密文
     """
